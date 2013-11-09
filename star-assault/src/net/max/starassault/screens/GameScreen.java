@@ -3,7 +3,7 @@
  */
 package net.max.starassault.screens;
 
-import net.max.starassault.controller.WorldController;
+import net.max.starassault.controller.BobController;
 import net.max.starassault.model.World;
 import net.max.starassault.view.WorldRenderer;
 
@@ -21,7 +21,7 @@ public class GameScreen implements Screen, InputProcessor {
 	
 	private World world;
 	private WorldRenderer renderer;
-	private WorldController controller;
+	private BobController controller;
 	
 	private int width, height;
 
@@ -54,7 +54,7 @@ public class GameScreen implements Screen, InputProcessor {
 	public void show() {
 		world = new World();
 		renderer = new WorldRenderer(world, true);
-		controller = new WorldController(world);
+		controller = new BobController(world);
 		Gdx.input.setInputProcessor(this);
 	}
 
@@ -115,6 +115,9 @@ public class GameScreen implements Screen, InputProcessor {
 			controller.jumpReleased();
 		if (keycode == Keys.X)
 			controller.fireReleased();
+		if (keycode == Keys.D) {
+			renderer.setDebug(!renderer.isDebug());
+		}
 		return true;
 	}
 	

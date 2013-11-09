@@ -20,6 +20,7 @@ public class Bob {
 	Rectangle bounds = new Rectangle();
 	State state = State.IDLE;
 	boolean facingLeft = true;
+	private boolean longJump = false;
 	
 	public Bob(Vector2 position) {
 		this.position = position;
@@ -40,13 +41,26 @@ public class Bob {
 	}
 
 	public void update(float delta) {
-		stateTime += delta;
 		position.add(velocity.tmp().mul(delta));
+		bounds.x = position.x;
+		bounds.y = position.y;
+		stateTime += delta;
 	}
 
 	public Vector2 getAcceleration() {
-		// TODO Auto-generated method stub
 		return acceleration;
+	}
+	
+	public void setAcceleration(Vector2 acceleration) {
+		this.acceleration = acceleration;
+	}
+	
+	public boolean isLongJump() {
+		return longJump;
+	}
+	
+	public void setLongJump(boolean longJump) {
+		this.longJump = longJump;
 	}
 	
 	public Vector2 getVelocity() {
@@ -67,5 +81,11 @@ public class Bob {
 
 	public float getStateTime() {
 		return stateTime;
+	}
+
+	public void setPosition(Vector2 position) {
+		this.position = position;
+		this.bounds.setX(position.x);
+		this.bounds.setY(position.y);
 	}
 }

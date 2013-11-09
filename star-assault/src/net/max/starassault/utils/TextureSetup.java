@@ -7,7 +7,7 @@ public class TextureSetup {
 		TexturePacker2.process(
 				"/home/max/work/ligdx/star-assault/star-assault-android/assets/images",
 				"/home/max/work/ligdx/star-assault/star-assault-android/assets/images/textures",
-				"texture.pack"
+				"textures.pack"
 		);
 	}
 }

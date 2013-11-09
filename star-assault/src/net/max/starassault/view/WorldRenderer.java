@@ -7,9 +7,7 @@ import net.max.starassault.model.World;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -31,6 +29,10 @@ public class WorldRenderer {
 	private TextureRegion bobIdleRight;
 	private TextureRegion blockTexture;
 	private TextureRegion bobFrame;
+	private TextureRegion bobJumpLeft;
+	private TextureRegion bobFallLeft;
+	private TextureRegion bobJumpRight;
+	private TextureRegion bobFallRight;
 	
 	private Animation walkLeftAnimation;
 	private Animation walkRightAnimation;
@@ -62,7 +64,7 @@ public class WorldRenderer {
 	}
 	
 	private void loadTextures() {
-		TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("images/textures/texture.pack"));
+		TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("images/textures/textures.pack"));
 
 		bobIdleLeft = atlas.findRegion("bob-01");
 		bobIdleRight = new TextureRegion(bobIdleLeft);
@@ -82,11 +84,18 @@ public class WorldRenderer {
 			walkRightFrames[i].flip(true, false);
 		}
 		walkRightAnimation = new Animation(RUNNING_FRAME_DURATION, walkRightFrames);
+		
+		bobJumpLeft = atlas.findRegion("bob-up");
+		bobJumpRight = new TextureRegion(bobJumpLeft);
+		bobJumpRight.flip(true, false);
+		bobFallLeft = atlas.findRegion("bob-down");
+		bobFallRight = new TextureRegion(bobFallLeft);
+		bobFallRight.flip(true, false);
 	}
 	
 	public void render() {
 		spriteBatch.begin();
-		drawBlocks();
+		//drawBlocks();
 		drawBob();
 		spriteBatch.end();
 		if (debug) {
@@ -110,6 +119,12 @@ public class WorldRenderer {
 			bobFrame = bob.isFacingLeft() ?
 					walkLeftAnimation.getKeyFrame(bob.getStateTime(), true)
 					: walkRightAnimation.getKeyFrame(bob.getStateTime(), true);
+		} else if (bob.getState().equals(State.JUMPING)) {
+			if (bob.getVelocity().y > 0) {
+				bobFrame = bob.isFacingLeft() ? bobJumpLeft: bobJumpRight;
+			} else {
+				bobFrame = bob.isFacingLeft() ? bobFallLeft: bobFallRight;
+			}
 		}
 		spriteBatch.draw(bobFrame,
 				bob.getPosition().x * ppuX,
@@ -123,19 +138,23 @@ public class WorldRenderer {
 		
 		for (Block block: world.getBlocks()) {
 			Rectangle rect = block.getBounds();
-			float x1 = block.getPosition().x + rect.x;
-			float y1 = block.getPosition().y + rect.y;
 			debugRenderer.setColor(new Color(1, 0, 0, 1));
-			debugRenderer.rect(x1,  y1, rect.width, rect.height);
+			debugRenderer.rect(rect.x, rect.y, rect.width, rect.height);
 		}
 		
 		Bob bob = world.getBob();
 		Rectangle rect = bob.getBounds();
-		float x1 = bob.getPosition().x + rect.x;
-		float y1 = bob.getPosition().y + rect.y;
 		debugRenderer.setColor(new Color(0, 1, 0, 1));
-		debugRenderer.rect(x1, y1, rect.width, rect.height);
+		debugRenderer.rect(rect.x, rect.y, rect.width, rect.height);
 		
 		debugRenderer.end();
+	}
+
+	public boolean isDebug() {
+		return debug;
+	}
+	
+	public void setDebug(boolean debug) {
+		this.debug = debug;
 	}
 }
